@@ -5,7 +5,7 @@ from collections import deque
 # Initialize Pygame
 pygame.init()
 
-# Colors
+# Define colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -17,15 +17,15 @@ ORANGE = (255, 165, 0)
 PURPLE = (160, 32, 240)
 GOLD = (255, 215, 0)
 
-# Screen dimensions
+# Set up screen dimensions
 WIDTH = 800
 HEIGHT = 600
 
-# Maze dimensions
+# Set maze dimensions
 MAZE_WIDTH = 31
 MAZE_HEIGHT = 23
 
-# Calculate cell size
+# Calculate cell size based on screen and maze dimensions
 CELL_SIZE = min((WIDTH - 200) // MAZE_WIDTH, HEIGHT // MAZE_HEIGHT)
 
 # Adjust screen size to fit maze and buttons
@@ -36,9 +36,10 @@ SCREEN_HEIGHT = max(CELL_SIZE * MAZE_HEIGHT, 300)
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Maze Generator and Solver")
 
-# Default speed (higher value = slower speed)
+# Set default speed (higher value = slower speed)
 speed = 100  # milliseconds
 
+# Define Button class for UI elements
 class Button:
     def __init__(self, x, y, width, height, text, color, text_color, action):
         self.rect = pygame.Rect(x, y, width, height)
@@ -59,6 +60,7 @@ class Button:
             if self.rect.collidepoint(event.pos):
                 self.action()
 
+# Define Maze class for maze generation and solving
 class Maze:
     def __init__(self, width, height):
         self.width = width
@@ -66,6 +68,7 @@ class Maze:
         self.maze = [[1 for _ in range(width)] for _ in range(height)]
 
     def generate(self):
+        # Use Depth-First Search to generate the maze
         def dfs(x, y):
             self.maze[y][x] = 0
             directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
@@ -82,6 +85,7 @@ class Maze:
         self.maze[self.height - 2][self.width - 1] = 0  # exit
 
     def solve(self):
+        # Use Breadth-First Search to solve the maze
         start = (0, 1)
         end = (self.width - 1, self.height - 2)
         queue = deque([(start, [start])])
@@ -108,6 +112,7 @@ class Maze:
 
         return None, frontier, explored
 
+# Function to draw the maze and UI elements
 def draw_maze(maze, solution=None, current=None, frontier=None, explored=None, show_restart=False):
     screen.fill(WHITE)
     for y in range(maze.height):
@@ -146,6 +151,7 @@ def draw_maze(maze, solution=None, current=None, frontier=None, explored=None, s
 
     pygame.display.flip()
 
+# Function to generate a new maze
 def generate_new_maze():
     global maze, solution, solver, game_over, frontier, explored
     maze.generate()
@@ -155,6 +161,7 @@ def generate_new_maze():
     frontier = set()  # Reset the frontier
     explored = set()  # Reset the explored nodes
 
+# Function to start solving the maze
 def start_solving():
     global solver, game_over, frontier, explored
     solver = maze.solve()
@@ -162,14 +169,17 @@ def start_solving():
     frontier = set()  # Reset the frontier
     explored = set()  # Reset the explored nodes
 
+# Function to increase solving speed
 def increase_speed():
     global speed
     speed = max(10, speed - 10)
 
+# Function to decrease solving speed
 def decrease_speed():
     global speed
     speed += 10
 
+# Function to reset the game
 def go_home():
     global maze, solution, solver, game_over
     maze = Maze(MAZE_WIDTH, MAZE_HEIGHT)
@@ -178,6 +188,7 @@ def go_home():
     solver = None
     game_over = False
 
+# Function to handle restart event
 def handle_restart(event):
     global game_over
     if event.type == pygame.KEYDOWN:
@@ -188,12 +199,14 @@ def handle_restart(event):
             pygame.quit()
             exit()
 
+# Initialize maze and game variables
 maze = Maze(MAZE_WIDTH, MAZE_HEIGHT)
 maze.generate()
 solution = None
 solver = None
 game_over = False
 
+# Create UI buttons
 buttons = [
     Button(SCREEN_WIDTH - 180, 50, 160, 50, "Generate Maze", GRAY, BLACK, generate_new_maze),
     Button(SCREEN_WIDTH - 180, 120, 160, 50, "Solve Maze", GRAY, BLACK, start_solving),
@@ -202,6 +215,7 @@ buttons = [
     Button(SCREEN_WIDTH - 180, 330, 160, 50, "Home", GRAY, BLACK, go_home)
 ]
 
+# Main game loop
 def main():
     global solution, solver, game_over
     clock = pygame.time.Clock()
