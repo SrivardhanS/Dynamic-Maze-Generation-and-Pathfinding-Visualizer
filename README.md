@@ -23,3 +23,4 @@ An interactive visualization tool developed using **Python** and **Pygame** to d
     - 🟥 **Red**: Solution path
     - 🟩 **Green**: Start point
     - 🟦 **Blue**: End point
+5. Maze2.0.py has the latest code.
